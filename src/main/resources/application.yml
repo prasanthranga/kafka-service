@@ -7,12 +7,18 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
       retries: 3
     properties:
-      allow.auto.create.topics: true
+      auto.create.topics.enable: true   
 
-      
-    topics:
-      hrms:
-        partitions:4
-        replicas:2
+  
+        
+kafka:
+  topics:
+    hrms:
+      partitions: 4
+      replicas: 2
+        
+        

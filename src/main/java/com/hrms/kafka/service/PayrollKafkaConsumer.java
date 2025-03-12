@@ -8,16 +8,17 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
+import com.hrms.kafka.config.TenantContext;
 import com.hrms.kafka.constants.KafkaTopicConstants;
 
 @Component
 public class PayrollKafkaConsumer {
 	private static final Logger log = LoggerFactory.getLogger(PayrollKafkaConsumer.class);
 
-	private final WebSocketNotificationService notificationService;
+	private final NotificationService notificationService;
 
 	@Autowired
-	public PayrollKafkaConsumer(WebSocketNotificationService notificationService) {
+	public PayrollKafkaConsumer(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
 
@@ -30,9 +31,10 @@ public class PayrollKafkaConsumer {
 	 */
 
 	@KafkaListener(topics = KafkaTopicConstants.PAYROLL_PROCESS,  groupId = "payroll-processing-group")
-	public void consumePayrollEvent(String message, @Header(KafkaHeaders.RECEIVED_KEY) String userId) {
+	public void consumePayrollEvent(String message, @Header(KafkaHeaders.RECEIVED_KEY) String userId,  @Header("X-Tenant-ID") String tenantId) {
 		log.info("Received Payroll Event: {}", message);
 
+		System.out.println("tenat id "+tenantId +""+TenantContext.getTenantId());
 		// Send WebSocket Notification to User
 		notificationService.sendNotificationToUser(Long.valueOf(userId), message);
 	}
